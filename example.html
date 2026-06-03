@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Web Push — Subscribe Demo</title>
+    <style>
+      body { font-family: system-ui, sans-serif; max-width: 32rem; margin: 4rem auto; padding: 0 1rem; }
+      button { padding: 0.6rem 1rem; font-size: 1rem; cursor: pointer; }
+      #status { margin-top: 1rem; padding: 0.75rem; border-radius: 6px; background: #f3f4f6; white-space: pre-wrap; }
+    </style>
+  </head>
+  <body>
+    <h1>Enable Push Notifications</h1>
+    <p>Click the button to register the service worker and subscribe.</p>
+    <button id="subscribe">Subscribe</button>
+    <button id="unsubscribe">Unsubscribe</button>
+    <div id="status">Idle.</div>
+
+    <script type="module">
+      import { subscribeToPush, unsubscribeFromPush, isPushSupported } from './push-client.js';
+
+      // ---- Configure these for your deployment ----
+      const CONFIG = {
+        // Leave '' if this page is served from the same origin as the API
+        // (i.e. behind the same Nginx proxy). Otherwise set the API origin.
+        apiBaseUrl: '',
+        vapidPublicKey: 'REPLACE_WITH_NEXT_PUBLIC_VAPID_PUBLIC_KEY',
+        userId: 'user-42',
+        email: 'alice@example.com',
+      };
+
+      const statusEl = document.getElementById('status');
+      const setStatus = (msg) => { statusEl.textContent = msg; };
+
+      if (!isPushSupported()) {
+        setStatus('This browser does not support Web Push.');
+      }
+
+      document.getElementById('subscribe').addEventListener('click', async () => {
+        setStatus('Subscribing…');
+        try {
+          const sub = await subscribeToPush(CONFIG);
+          setStatus('Subscribed!\n' + JSON.stringify(sub.toJSON(), null, 2));
+        } catch (err) {
+          setStatus('Error: ' + err.message);
+        }
+      });
+
+      document.getElementById('unsubscribe').addEventListener('click', async () => {
+        setStatus('Unsubscribing…');
+        try {
+          const ok = await unsubscribeFromPush();
+          setStatus(ok ? 'Unsubscribed.' : 'No active subscription.');
+        } catch (err) {
+          setStatus('Error: ' + err.message);
+        }
+      });
+    </script>
+  </body>
+</html>
