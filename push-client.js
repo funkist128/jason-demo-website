@@ -58,7 +58,7 @@ export async function subscribeToPush({
   if (!email) throw new Error('email is required.');
 
   // 1. Register the service worker and wait until it is active.
-  const registration = await navigator.serviceWorker.register(serviceWorkerUrl);
+  const registration = await navigator.serviceWorker.register(serviceWorkerUrl, { scope: '/jason-demo-website/' });
   await navigator.serviceWorker.ready;
 
   // 2. Ask for notification permission.
