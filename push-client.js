@@ -48,7 +48,7 @@ export async function subscribeToPush({
   vapidPublicKey,
   userId,
   email,
-  serviceWorkerUrl = '/service-worker.js',
+  serviceWorkerUrl = '/jason-demo-website/service-worker.js',
 } = {}) {
   if (!isPushSupported()) {
     throw new Error('Web Push is not supported in this browser.');
